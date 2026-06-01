@@ -1,7 +1,18 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
+import { BlurView } from 'expo-blur';
 import { colors, shadow } from '@/theme';
+
+/** Frosted, translucent tab bar background — the iOS "Liquid Glass" surface. */
+function TabBarBlur() {
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <BlurView tint="light" intensity={40} style={StyleSheet.absoluteFill} />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(250,252,250,0.72)' }]} />
+    </View>
+  );
+}
 
 /** Emoji tab icon (keeps us free of an icon-font dependency). */
 function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
@@ -34,6 +45,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.court,
         tabBarInactiveTintColor: colors.inkFaint,
         tabBarStyle: styles.tabBar,
+        tabBarBackground: () => <TabBarBlur />,
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}
     >
@@ -84,9 +96,11 @@ export default function TabsLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: colors.surface,
+    position: 'absolute',
+    backgroundColor: 'transparent',
     borderTopColor: colors.separator,
     borderTopWidth: StyleSheet.hairlineWidth,
+    elevation: 0,
     height: 66,
     paddingTop: 8,
     paddingBottom: 8,
