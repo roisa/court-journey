@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { BlurView } from 'expo-blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, shadow } from '@/theme';
 
 /** Frosted, translucent tab bar background — the iOS "Liquid Glass" surface. */
@@ -19,16 +20,29 @@ function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.45 }}>{emoji}</Text>;
 }
 
-/** The raised center ⚡ Capture button — the heart of the app (docs/03). */
-function CaptureButton() {
+/**
+ * Floating ⚡ Capture button. It opens the /capture modal directly rather than
+ * routing through a placeholder tab — that placeholder was the blank screen
+ * that flashed before the modal appeared.
+ */
+function CaptureFab() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.captureWrap} pointerEvents="box-none">
+    <View
+      pointerEvents="box-none"
+      style={[StyleSheet.absoluteFill, { justifyContent: 'flex-end', alignItems: 'center' }]}
+    >
       <Pressable
         accessibilityLabel="Capture a match"
         accessibilityRole="button"
         onPress={() => router.push('/capture')}
-        style={({ pressed }) => [styles.captureBtn, shadow.floating, pressed && { opacity: 0.85 }]}
+        style={({ pressed }) => [
+          styles.captureBtn,
+          shadow.floating,
+          { marginBottom: insets.bottom + 14 },
+          pressed && { opacity: 0.9, transform: [{ scale: 0.96 }] },
+        ]}
       >
         <Text style={styles.captureIcon}>⚡</Text>
       </Pressable>
@@ -37,60 +51,49 @@ function CaptureButton() {
 }
 
 export default function TabsLayout() {
-  const router = useRouter();
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.court,
-        tabBarInactiveTintColor: colors.inkFaint,
-        tabBarStyle: styles.tabBar,
-        tabBarBackground: () => <TabBarBlur />,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Journey',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📖" focused={focused} />,
+    <View style={{ flex: 1 }}>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: colors.court,
+          tabBarInactiveTintColor: colors.inkFaint,
+          tabBarStyle: styles.tabBar,
+          tabBarBackground: () => <TabBarBlur />,
+          tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
         }}
-      />
-      <Tabs.Screen
-        name="learn"
-        options={{
-          title: 'Learn',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🧠" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="capture"
-        options={{
-          title: '',
-          tabBarButton: () => <CaptureButton />,
-        }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push('/capture');
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="prepare"
-        options={{
-          title: 'Prepare',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🎯" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🏅" focused={focused} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Journey',
+            tabBarIcon: ({ focused }) => <TabIcon emoji="📖" focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
+          name="learn"
+          options={{
+            title: 'Learn',
+            tabBarIcon: ({ focused }) => <TabIcon emoji="🧠" focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
+          name="prepare"
+          options={{
+            title: 'Prepare',
+            tabBarIcon: ({ focused }) => <TabIcon emoji="🎯" focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ focused }) => <TabIcon emoji="🏅" focused={focused} />,
+          }}
+        />
+      </Tabs>
+      <CaptureFab />
+    </View>
   );
 }
 
@@ -105,22 +108,15 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 8,
   },
-  captureWrap: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   captureBtn: {
-    position: 'absolute',
-    bottom: 4,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
     backgroundColor: colors.court,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 3,
+    borderWidth: 4,
     borderColor: colors.paper,
   },
-  captureIcon: { fontSize: 26, color: colors.onCourt },
+  captureIcon: { fontSize: 27, color: colors.onCourt },
 });

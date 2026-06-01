@@ -17,6 +17,7 @@ import type {
   Intent,
   Lesson,
   Match,
+  MatchContext,
   Memory,
   Outcome,
   Photo,
@@ -50,6 +51,7 @@ export interface CaptureInput {
   result: Outcome;
   feeling?: Feeling;
   sport: Sport;
+  context?: MatchContext;
   opponentName?: string;
   score?: string;
   venue?: string;
@@ -342,6 +344,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const match: Match = {
         id: matchId,
         tournamentId: input.tournamentId,
+        context: input.context,
         sport: input.sport,
         opponentName: input.opponentName,
         result: input.result,

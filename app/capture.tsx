@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import type { Feeling, Outcome } from '@/types/models';
+import type { Feeling, MatchContext, Outcome } from '@/types/models';
 import { useApp } from '@/store/AppStore';
 import { FEELINGS } from '@/data/feelings';
 import { REFLECTION_CHIPS } from '@/data/tags';
@@ -9,6 +9,12 @@ import { Button, Card, Pill, Row, Screen, SectionTitle, Txt } from '@/components
 import { VoiceRecorder, type VoiceCapture } from '@/components/VoiceRecorder';
 import { PhotoPicker } from '@/components/PhotoPicker';
 import { colors, radii, spacing } from '@/theme';
+
+const KINDS: { value: MatchContext; label: string }[] = [
+  { value: 'tournament', label: '🏆 Tournament' },
+  { value: 'mini', label: '🎯 Mini tournament' },
+  { value: 'casual', label: '🎾 Casual / practice' },
+];
 
 const OUTCOMES: { value: Outcome; label: string; color: string; tint: string }[] = [
   { value: 'won', label: 'Won 🎉', color: colors.win, tint: colors.courtTint },
@@ -22,6 +28,9 @@ export default function Capture() {
   const params = useLocalSearchParams<{ tournamentId?: string }>();
   const sport = state.user?.primarySport ?? 'tennis';
 
+  const [context, setContext] = useState<MatchContext | null>(
+    params.tournamentId ? 'tournament' : null,
+  );
   const [result, setResult] = useState<Outcome | null>(null);
   const [feeling, setFeeling] = useState<Feeling | undefined>();
   const [chips, setChips] = useState<string[]>([]);
@@ -50,6 +59,7 @@ export default function Capture() {
         result,
         feeling,
         sport,
+        context: context ?? undefined,
         opponentName: opponent.trim() || undefined,
         score: score.trim() || undefined,
         venue: venue.trim() || undefined,
@@ -86,30 +96,76 @@ export default function Capture() {
     <Screen>
       <View style={{ height: spacing.md }} />
 
-      {/* 1 — Outcome (the only required step) */}
-      <Txt variant="title">How’d it go?</Txt>
+      {/* 1 — What kind of match? (asked first) */}
+      <Txt variant="title">What kind of match?</Txt>
       <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
-        {OUTCOMES.map((o) => (
+        {KINDS.map((k) => (
           <Pressable
-            key={o.value}
-            onPress={() => setResult(o.value)}
+            key={k.value}
+            onPress={() => {
+              setContext(k.value);
+              if (k.value === 'casual') setTournamentId(undefined);
+            }}
             style={({ pressed }) => [
               styles.outcome,
-              result === o.value && { borderColor: o.color, backgroundColor: o.tint },
+              context === k.value && { borderColor: colors.court, backgroundColor: colors.courtTint },
               pressed && { opacity: 0.85 },
             ]}
           >
-            <Txt variant="bodyStrong" color={result === o.value ? o.color : colors.ink}>
-              {o.label}
+            <Txt variant="bodyStrong" color={context === k.value ? colors.court : colors.ink}>
+              {k.label}
             </Txt>
-            {result === o.value && <Txt variant="bodyStrong" color={o.color}>✓</Txt>}
+            {context === k.value && <Txt variant="bodyStrong" color={colors.court}>✓</Txt>}
           </Pressable>
         ))}
       </View>
 
-      {result && (
+      {/* Optional: attach to an existing tournament */}
+      {(context === 'tournament' || context === 'mini') && state.tournaments.length > 0 && (
         <>
-          {/* 2 — Feeling */}
+          <SectionTitle>Which one?</SectionTitle>
+          <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
+            {state.tournaments.map((t) => (
+              <Pill
+                key={t.id}
+                label={t.name}
+                selected={tournamentId === t.id}
+                onPress={() => setTournamentId(t.id)}
+              />
+            ))}
+            <Pill label="Not listed" selected={!tournamentId} onPress={() => setTournamentId(undefined)} />
+          </Row>
+        </>
+      )}
+
+      {context && (
+        <>
+          {/* 2 — Outcome */}
+          <SectionTitle>How’d it go?</SectionTitle>
+          <View style={{ gap: spacing.sm }}>
+            {OUTCOMES.map((o) => (
+              <Pressable
+                key={o.value}
+                onPress={() => setResult(o.value)}
+                style={({ pressed }) => [
+                  styles.outcome,
+                  result === o.value && { borderColor: o.color, backgroundColor: o.tint },
+                  pressed && { opacity: 0.85 },
+                ]}
+              >
+                <Txt variant="bodyStrong" color={result === o.value ? o.color : colors.ink}>
+                  {o.label}
+                </Txt>
+                {result === o.value && <Txt variant="bodyStrong" color={o.color}>✓</Txt>}
+              </Pressable>
+            ))}
+          </View>
+        </>
+      )}
+
+      {context && result && (
+        <>
+          {/* 3 — Feeling */}
           <SectionTitle>How do you feel?</SectionTitle>
           <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
             {FEELINGS.map((f) => (
@@ -169,24 +225,6 @@ export default function Capture() {
               <Field label="Opponent" value={opponent} onChange={setOpponent} placeholder="e.g. Marco" />
               <Field label="Score" value={score} onChange={setScore} placeholder="e.g. 6-4 3-6 7-5" />
               <Field label="Venue" value={venue} onChange={setVenue} placeholder="Where you played" />
-              {state.tournaments.length > 0 && (
-                <View>
-                  <Txt variant="label" color={colors.inkSoft} style={{ marginBottom: spacing.sm }}>
-                    Part of a tournament?
-                  </Txt>
-                  <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
-                    <Pill label="No" selected={!tournamentId} onPress={() => setTournamentId(undefined)} />
-                    {state.tournaments.map((t) => (
-                      <Pill
-                        key={t.id}
-                        label={t.name}
-                        selected={tournamentId === t.id}
-                        onPress={() => setTournamentId(t.id)}
-                      />
-                    ))}
-                  </Row>
-                </View>
-              )}
             </Card>
           )}
 
