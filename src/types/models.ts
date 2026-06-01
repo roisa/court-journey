@@ -10,6 +10,9 @@ export type Sport = 'tennis' | 'padel';
 
 export type Outcome = 'won' | 'lost' | 'played';
 
+/** What kind of match this was — asked first in the capture flow. */
+export type MatchContext = 'tournament' | 'mini' | 'casual';
+
 /** The single emotional pulse captured after a match. Order = intensity scale. */
 export type Feeling = 'frustrated' | 'flat' | 'okay' | 'good' | 'onfire';
 
@@ -49,6 +52,7 @@ export interface Tournament {
 export interface Match {
   id: string;
   tournamentId?: string; // NULLABLE — casual/practice matches have none
+  context?: MatchContext; // tournament / mini tournament / casual
   sport: Sport;
   opponentName?: string;
   result: Outcome;
