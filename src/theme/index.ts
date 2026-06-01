@@ -1,39 +1,44 @@
 /**
- * Court Journey design tokens.
+ * Court Journey design tokens — "Wimbledon" theme.
  *
- * Visual language (per docs/11-ux-screens.md): warm and editorial, like a
- * beautiful journal — NOT a dashboard. Deep court-green, warm clay accents,
- * soft cream paper backgrounds, generous whitespace.
+ * Visual language: the elegance of Wimbledon (deep grass green, cream, a touch
+ * of championship purple) expressed through latest-iOS UI patterns — large
+ * titles, inset-grouped surfaces, capsule controls, hairline separators over
+ * heavy shadow, and a 17pt body. Calm, premium, familiar.
  */
 
 export const colors = {
-  // Brand
-  court: '#0E5C4A', // deep court green
-  courtDark: '#0A4438',
-  clay: '#C8654A', // warm clay accent
-  clayLight: '#E8A78E',
+  // Brand — Wimbledon grass green + championship purple accent
+  court: '#00703C', // Wimbledon green
+  courtDark: '#00532B',
+  courtTint: '#E2EFE7', // selected / filled-light green
+  clay: '#C2663B', // warm accent (used for "weakness" semantics)
+  clayLight: '#E5B79C',
+  accent: '#4E2A84', // Wimbledon purple
+  accentTint: '#ECE6F3',
 
-  // Paper / surfaces
-  paper: '#FAF8F4', // clean warm white
-  surface: '#FFFFFF',
-  surfaceAlt: '#F2EEE7',
+  // Backgrounds — iOS grouped layering, lightly grass-tinted
+  paper: '#EEF2EC', // systemGroupedBackground
+  surface: '#FFFFFF', // card / elevated
+  surfaceAlt: '#E8EEE7', // secondary fill (chips, inputs)
 
-  // Ink / text
-  ink: '#22201C',
-  inkSoft: '#5C574E',
-  inkFaint: '#938C7F',
+  // Ink / text — iOS label hierarchy
+  ink: '#15201A',
+  inkSoft: '#586059',
+  inkFaint: '#9AA39B',
 
   // Feedback
-  win: '#1F8A5B',
-  loss: '#B4543A',
-  neutralPlay: '#5C574E',
+  win: '#1E8E4E',
+  loss: '#D14338',
+  neutralPlay: '#6B7570',
 
   // Lines
-  hairline: '#E7E0D3',
+  hairline: '#DCE4DB',
+  separator: '#DCE4DB',
 
-  // On-dark
-  onCourt: '#F6F2E9',
-  onCourtSoft: '#BFD6CD',
+  // On-green surfaces
+  onCourt: '#FFFFFF',
+  onCourtSoft: '#BFD8C8',
 } as const;
 
 export const spacing = {
@@ -47,39 +52,41 @@ export const spacing = {
 } as const;
 
 export const radii = {
-  sm: 8,
-  md: 14,
-  lg: 20,
+  sm: 10,
+  md: 16,
+  lg: 22, // iOS continuous-corner card
   xl: 28,
   pill: 999,
 } as const;
 
 export const typography = {
-  display: { fontSize: 32, fontWeight: '700' as const, letterSpacing: -0.7, lineHeight: 38 },
-  title: { fontSize: 23, fontWeight: '700' as const, letterSpacing: -0.4, lineHeight: 29 },
-  heading: { fontSize: 18, fontWeight: '700' as const, letterSpacing: -0.2 },
-  body: { fontSize: 16, fontWeight: '400' as const, lineHeight: 24 },
-  bodyStrong: { fontSize: 16, fontWeight: '600' as const, lineHeight: 24 },
-  // Used for AI-written journal prose — slightly larger, airy line-height.
+  // iOS large title
+  display: { fontSize: 34, fontWeight: '800' as const, letterSpacing: -0.6, lineHeight: 41 },
+  title: { fontSize: 26, fontWeight: '700' as const, letterSpacing: -0.4, lineHeight: 32 },
+  heading: { fontSize: 20, fontWeight: '700' as const, letterSpacing: -0.3, lineHeight: 25 },
+  body: { fontSize: 17, fontWeight: '400' as const, lineHeight: 24 },
+  bodyStrong: { fontSize: 17, fontWeight: '600' as const, lineHeight: 24 },
+  // AI-written journal prose — airy line-height.
   prose: { fontSize: 17, fontWeight: '400' as const, lineHeight: 28 },
-  label: { fontSize: 14, fontWeight: '600' as const },
+  label: { fontSize: 15, fontWeight: '600' as const },
   caption: { fontSize: 13, fontWeight: '500' as const },
-  micro: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 1 },
+  micro: { fontSize: 12, fontWeight: '700' as const, letterSpacing: 0.8 },
 } as const;
 
 export const shadow = {
+  // iOS leans on fills + hairlines, not heavy shadow. Keep it whisper-soft.
   card: {
-    shadowColor: '#3A2E1E',
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 2,
-  },
-  floating: {
-    shadowColor: '#0A4438',
-    shadowOpacity: 0.28,
+    shadowColor: '#0A2418',
+    shadowOpacity: 0.05,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 6 },
+    elevation: 1,
+  },
+  floating: {
+    shadowColor: '#00532B',
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
     elevation: 8,
   },
 } as const;

@@ -133,7 +133,7 @@ export function Button({
       style={({ pressed }) => [
         styles.button,
         isPrimary && { backgroundColor: colors.court },
-        variant === 'secondary' && { backgroundColor: colors.surfaceAlt },
+        variant === 'secondary' && { backgroundColor: colors.courtTint },
         isGhost && { backgroundColor: 'transparent' },
         (disabled || loading) && { opacity: 0.5 },
         pressed && styles.pressed,
@@ -219,6 +219,42 @@ export function Row({
   return <View style={[{ flexDirection: 'row', alignItems: 'center', gap }, style]}>{children}</View>;
 }
 
+// ---------------------------------------------------------------------------
+// Segmented control (iOS-style)
+// ---------------------------------------------------------------------------
+
+interface SegmentedProps<T extends string> {
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}
+
+export function Segmented<T extends string>({ options, value, onChange }: SegmentedProps<T>) {
+  return (
+    <View style={styles.segment}>
+      {options.map((o) => {
+        const on = o.value === value;
+        return (
+          <Pressable
+            key={o.value}
+            onPress={() => onChange(o.value)}
+            style={[styles.segmentItem, on && styles.segmentItemOn]}
+          >
+            <Text
+              style={[
+                typography.label,
+                { color: on ? colors.court : colors.inkSoft, fontWeight: on ? '700' : '600' },
+              ]}
+            >
+              {o.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   card: {
@@ -227,7 +263,7 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.75, transform: [{ scale: 0.99 }] },
   button: {
-    height: 52,
+    height: 50,
     borderRadius: radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
@@ -240,9 +276,26 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   pillIdle: {
-    backgroundColor: colors.surface,
-    borderColor: colors.hairline,
+    backgroundColor: colors.surfaceAlt,
+    borderColor: colors.surfaceAlt,
   },
-  sectionTitle: { marginTop: spacing.xl, marginBottom: spacing.sm },
+  sectionTitle: { marginTop: spacing.xl, marginBottom: spacing.sm, marginLeft: spacing.xs },
   divider: { height: 1, backgroundColor: colors.hairline, marginVertical: spacing.lg },
+  segment: {
+    flexDirection: 'row',
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radii.md,
+    padding: 3,
+  },
+  segmentItem: {
+    flex: 1,
+    height: 34,
+    borderRadius: radii.md - 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  segmentItemOn: {
+    backgroundColor: colors.surface,
+    ...shadow.card,
+  },
 });

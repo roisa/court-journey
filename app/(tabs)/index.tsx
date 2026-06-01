@@ -5,7 +5,7 @@ import { useApp } from '@/store/AppStore';
 import { pickResurfaced } from '@/services/resurfacing';
 import { MemoryCard } from '@/components/MemoryCard';
 import { ResurfaceCard } from '@/components/ResurfaceCard';
-import { Button, Card, Pill, Row, Screen, Txt } from '@/components/ui';
+import { Button, Card, Screen, Segmented, Txt } from '@/components/ui';
 import { colors, spacing } from '@/theme';
 
 type Filter = 'all' | 'tournaments';
@@ -44,14 +44,16 @@ export default function Journey() {
         <EmptyState onCapture={() => router.push('/capture')} />
       ) : (
         <>
-          <Row gap={spacing.sm} style={{ marginBottom: spacing.md }}>
-            <Pill label="All" selected={filter === 'all'} onPress={() => setFilter('all')} />
-            <Pill
-              label="Tournaments"
-              selected={filter === 'tournaments'}
-              onPress={() => setFilter('tournaments')}
+          <View style={{ marginBottom: spacing.lg }}>
+            <Segmented
+              value={filter}
+              onChange={setFilter}
+              options={[
+                { value: 'all', label: 'All' },
+                { value: 'tournaments', label: 'Tournaments' },
+              ]}
             />
-          </Row>
+          </View>
 
           <View style={{ gap: spacing.md }}>
             {memories.map((m) => (
