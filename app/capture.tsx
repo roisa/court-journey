@@ -73,8 +73,8 @@ export default function Capture() {
           <Txt variant="heading" center style={{ marginTop: spacing.md }}>
             Writing your memory…
           </Txt>
-          <Txt variant="body" color={colors.inkSoft} center style={{ marginTop: spacing.sm }}>
-            Turning that into something you’ll love re-reading.
+          <Txt variant="body" color={colors.inkSoft} center style={{ marginTop: spacing.xs }}>
+            One moment.
           </Txt>
           <ActivityIndicator color={colors.court} style={{ marginTop: spacing.lg }} />
         </View>
@@ -110,7 +110,7 @@ export default function Capture() {
       {result && (
         <>
           {/* 2 — Feeling */}
-          <SectionTitle>How do you feel right now?</SectionTitle>
+          <SectionTitle>How do you feel?</SectionTitle>
           <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
             {FEELINGS.map((f) => (
               <Pressable

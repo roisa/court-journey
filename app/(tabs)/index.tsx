@@ -28,11 +28,8 @@ export default function Journey() {
 
   return (
     <Screen>
-      <View style={{ height: spacing.md }} />
-      <Txt variant="micro" color={colors.inkFaint}>
-        YOUR JOURNEY
-      </Txt>
-      <Txt variant="title" style={{ marginTop: spacing.xs, marginBottom: spacing.lg }}>
+      <View style={{ height: spacing.lg }} />
+      <Txt variant="display" style={{ marginBottom: spacing.lg }}>
         Hi {firstName} 👋
       </Txt>
 
@@ -64,7 +61,7 @@ export default function Journey() {
 
           {memories.length === 0 && (
             <Txt variant="body" color={colors.inkFaint} center style={{ marginTop: spacing.xl }}>
-              No tournament memories yet. Group a match into a tournament to start a chapter.
+              No tournament memories yet.
             </Txt>
           )}
         </>
@@ -78,14 +75,13 @@ function EmptyState({ onCapture }: { onCapture: () => void }) {
     <Card style={{ alignItems: 'center', paddingVertical: spacing.xxl }}>
       <Txt variant="display">🎾</Txt>
       <Txt variant="heading" center style={{ marginTop: spacing.md }}>
-        Your journey starts with one match.
+        Start your story
       </Txt>
-      <Txt variant="body" color={colors.inkSoft} center style={{ marginTop: spacing.sm }}>
-        Just finished playing? Capture how it went in under 30 seconds — we’ll turn it into a
-        memory worth keeping.
+      <Txt variant="body" color={colors.inkSoft} center style={{ marginTop: spacing.xs }}>
+        Capture a match in seconds.
       </Txt>
       <View style={{ height: spacing.lg }} />
-      <Button label="⚡ Capture your first match" onPress={onCapture} />
+      <Button label="⚡ Capture a match" onPress={onCapture} />
     </Card>
   );
 }

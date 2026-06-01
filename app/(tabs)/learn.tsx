@@ -33,21 +33,14 @@ export default function Learn() {
 
   return (
     <Screen>
-      <View style={{ height: spacing.md }} />
-      <Txt variant="micro" color={colors.inkFaint}>
-        LEARN
-      </Txt>
-      <Txt variant="title" style={{ marginTop: spacing.xs }}>
-        What your game is telling you.
-      </Txt>
+      <View style={{ height: spacing.lg }} />
+      <Txt variant="display">Your patterns</Txt>
 
       {insights.length === 0 ? (
         <Card style={{ marginTop: spacing.lg }}>
-          <Txt variant="heading">Keep reflecting 🌱</Txt>
-          <Txt variant="body" color={colors.inkSoft} style={{ marginTop: spacing.sm }}>
-            After a few more matches we’ll start spotting your patterns — your real strengths, the
-            moments that trip you up, and how you bounce back. No charts, no stats. Just the things
-            you’d never notice on your own.
+          <Txt variant="heading">A few more matches 🌱</Txt>
+          <Txt variant="body" color={colors.inkSoft} style={{ marginTop: spacing.xs }}>
+            Your patterns show up here — no charts, just insight.
           </Txt>
         </Card>
       ) : (

@@ -26,7 +26,7 @@ export default function Achievements() {
       <View style={{ height: spacing.md }} />
       <Txt variant="title">Your wall</Txt>
       <Txt variant="body" color={colors.inkSoft} style={{ marginTop: spacing.xs }}>
-        {earnedCount} earned — each one a real moment, not a points grind.
+        {earnedCount} earned
       </Txt>
 
       {ACHIEVEMENT_CATEGORIES.map((category) => {
