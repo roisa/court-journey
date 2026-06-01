@@ -42,7 +42,7 @@ export default function Onboarding() {
   return (
     <Screen>
       <View style={{ height: spacing.xxl }} />
-      <Txt variant="micro" color={colors.clay}>
+      <Txt variant="micro" color={colors.accent}>
         COURT JOURNEY
       </Txt>
       <Txt variant="display" style={{ marginTop: spacing.sm }}>
