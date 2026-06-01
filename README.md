@@ -26,6 +26,36 @@ We always choose: *simpler over complex · emotion over statistics · memories o
 
 ---
 
+## The app (MVP, in this repo)
+
+A working, mobile-first MVP of the core loop — **capture a match in ≤30s → AI turns it into a beautiful memory → it lives in your Journey and resurfaces.** Built with the Phase 13 stack.
+
+```bash
+npm install
+npm run start      # Expo dev server — open in Expo Go (iOS/Android) or press 'w' for web
+npm run web        # web preview
+npm run typecheck  # tsc --noEmit
+```
+
+**Stack:** Expo SDK 56 · React Native · TypeScript · Expo Router · Reanimated.
+**Architecture:** local-first (AsyncStorage), offline-capable, zero secrets required. The AI story generator ships with an on-device heuristic and a Claude-ready implementation that activates via `EXPO_PUBLIC_ANTHROPIC_API_KEY` (in production the key belongs in a Supabase Edge Function — see Phase 13).
+
+| Layer | Where |
+|-------|-------|
+| Screens (Expo Router) | `app/` — onboarding, tabs (Journey/Learn/Prepare/Profile), `capture`, `memory/[id]`, `tournament/[id]`, `achievements` |
+| State + persistence | `src/store/AppStore.tsx`, `src/services/storage.ts` |
+| AI story generation | `src/services/ai/` (swappable: local + Claude) |
+| Improvement Engine | `src/services/insights.ts` |
+| Memory resurfacing | `src/services/resurfacing.ts` |
+| Self-writing chapters | `src/services/chapter.ts` |
+| Achievements & checklists | `src/data/` |
+| Domain models | `src/types/models.ts` (match-first, tournament-optional) |
+| Design tokens | `src/theme/` |
+
+What's implemented: onboarding · Journey feed · ≤30s capture (3-tap + voice note + photos) · AI memory generation · editable memory detail with voice playback · tournaments with auto-written chapters · adaptive prep checklists · language-based insights · ~18 working achievements with celebration · "On This Day" resurfacing. See Phase 14 for the build plan this follows.
+
+---
+
 ## The design spec (read in order)
 
 | # | Phase | Document |
