@@ -37,10 +37,10 @@ export default function Prepare() {
         <Card style={{ alignItems: 'center', paddingVertical: spacing.xxl, marginTop: spacing.lg }}>
           <Txt variant="display">🧘</Txt>
           <Txt variant="heading" center style={{ marginTop: spacing.md }}>
-            No tournament on the horizon.
+            Nothing on the horizon
           </Txt>
-          <Txt variant="body" color={colors.inkSoft} center style={{ marginTop: spacing.sm }}>
-            When you’ve got one coming up, set it here and we’ll get you ready — calm and confident.
+          <Txt variant="body" color={colors.inkSoft} center style={{ marginTop: spacing.xs }}>
+            Add a tournament and we’ll get you set.
           </Txt>
           <View style={{ height: spacing.lg }} />
           <Button label="+ Plan a tournament" onPress={() => router.push('/tournament/new')} />
@@ -92,7 +92,7 @@ export default function Prepare() {
       {confidence && (
         <Card style={{ marginTop: spacing.md, borderLeftWidth: 4, borderLeftColor: colors.win }}>
           <Txt variant="micro" color={colors.win}>
-            CONFIDENCE FROM YOUR HISTORY
+            YOUR EDGE
           </Txt>
           <Txt variant="body" style={{ marginTop: spacing.xs }}>
             {confidence.narrative}
@@ -174,13 +174,8 @@ export default function Prepare() {
 function Header() {
   return (
     <>
-      <View style={{ height: spacing.md }} />
-      <Txt variant="micro" color={colors.inkFaint}>
-        PREPARE
-      </Txt>
-      <Txt variant="title" style={{ marginTop: spacing.xs }}>
-        Walk on calm and ready.
-      </Txt>
+      <View style={{ height: spacing.lg }} />
+      <Txt variant="display">Get ready</Txt>
     </>
   );
 }

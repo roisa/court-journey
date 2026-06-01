@@ -92,7 +92,7 @@ export default function Profile() {
             🧠
           </Txt>
           <Txt variant="bodyStrong" style={{ flex: 1 }}>
-            What your game is telling you
+            Your patterns
           </Txt>
           <Txt variant="body" color={colors.inkFaint}>
             →
@@ -103,12 +103,12 @@ export default function Profile() {
       <SectionTitle>Settings</SectionTitle>
       <Pressable onPress={confirmReset} style={styles.dangerRow}>
         <Txt variant="bodyStrong" color={colors.loss}>
-          Start over (erase journey)
+          Start over
         </Txt>
       </Pressable>
 
       <Txt variant="caption" color={colors.inkFaint} center style={{ marginTop: spacing.xxl }}>
-        Court Journey · your story, your way
+        Court Journey
       </Txt>
     </Screen>
   );

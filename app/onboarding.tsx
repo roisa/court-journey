@@ -7,17 +7,12 @@ import { Button, Pill, Row, Screen, SectionTitle, Txt } from '@/components/ui';
 import { colors, radii, spacing } from '@/theme';
 
 const INTENTS: { value: Intent; label: string }[] = [
-  { value: 'remember', label: '📸 Remember my moments' },
-  { value: 'improve', label: '📈 Get better' },
-  { value: 'prepare', label: '🧘 Feel ready for tournaments' },
+  { value: 'remember', label: '📸 Remember' },
+  { value: 'improve', label: '📈 Improve' },
+  { value: 'prepare', label: '🧘 Feel ready' },
 ];
 
-const LEVELS = [
-  'Just starting out',
-  'I rally fine, but matches scare me',
-  'Comfortable competitor',
-  'Seasoned tournament player',
-];
+const LEVELS = ['Just starting', 'Getting there', 'Competitor', 'Seasoned'];
 
 export default function Onboarding() {
   const { completeOnboarding } = useApp();
@@ -51,14 +46,13 @@ export default function Onboarding() {
         COURT JOURNEY
       </Txt>
       <Txt variant="display" style={{ marginTop: spacing.sm }}>
-        Your story on court starts here.
+        Your story{'\n'}on court.
       </Txt>
       <Txt variant="body" color={colors.inkSoft} style={{ marginTop: spacing.sm }}>
-        Not a stats tracker — a place to remember the matches, lessons and feelings you’ll want
-        to relive in years to come. Takes under a minute.
+        The matches, lessons and feelings worth keeping.
       </Txt>
 
-      <SectionTitle>What should we call you?</SectionTitle>
+      <SectionTitle>Your name</SectionTitle>
       <TextInput
         value={name}
         onChangeText={setName}
@@ -74,15 +68,15 @@ export default function Onboarding() {
         <Pill label="🟦 Padel" selected={sport === 'padel'} onPress={() => setSport('padel')} />
       </Row>
 
-      <SectionTitle>Where are you right now?</SectionTitle>
-      <View style={{ gap: spacing.sm }}>
+      <SectionTitle>Your level</SectionTitle>
+      <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
         {LEVELS.map((l) => (
           <Pill key={l} label={l} selected={level === l} onPress={() => setLevel(l)} />
         ))}
-      </View>
+      </Row>
 
-      <SectionTitle>Why are you here? (pick any)</SectionTitle>
-      <View style={{ gap: spacing.sm }}>
+      <SectionTitle>Why you’re here</SectionTitle>
+      <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
         {INTENTS.map((i) => (
           <Pill
             key={i.value}
@@ -91,9 +85,9 @@ export default function Onboarding() {
             onPress={() => toggleIntent(i.value)}
           />
         ))}
-      </View>
+      </Row>
 
-      <SectionTitle>Home club / court (optional)</SectionTitle>
+      <SectionTitle>Home court (optional)</SectionTitle>
       <TextInput
         value={venue}
         onChangeText={setVenue}
@@ -103,7 +97,7 @@ export default function Onboarding() {
       />
 
       <View style={{ height: spacing.xxl }} />
-      <Button label="Start my journey  🎾" onPress={start} />
+      <Button label="Start  🎾" onPress={start} />
       <View style={{ height: spacing.xl }} />
     </Screen>
   );

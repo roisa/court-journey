@@ -14,9 +14,9 @@ export const colors = {
   clayLight: '#E8A78E',
 
   // Paper / surfaces
-  paper: '#FBF7F0', // warm cream background
+  paper: '#FAF8F4', // clean warm white
   surface: '#FFFFFF',
-  surfaceAlt: '#F3EEE4',
+  surfaceAlt: '#F2EEE7',
 
   // Ink / text
   ink: '#22201C',
@@ -55,24 +55,24 @@ export const radii = {
 } as const;
 
 export const typography = {
-  display: { fontSize: 30, fontWeight: '700' as const, letterSpacing: -0.5 },
-  title: { fontSize: 24, fontWeight: '700' as const, letterSpacing: -0.3 },
-  heading: { fontSize: 19, fontWeight: '700' as const },
+  display: { fontSize: 32, fontWeight: '700' as const, letterSpacing: -0.7, lineHeight: 38 },
+  title: { fontSize: 23, fontWeight: '700' as const, letterSpacing: -0.4, lineHeight: 29 },
+  heading: { fontSize: 18, fontWeight: '700' as const, letterSpacing: -0.2 },
   body: { fontSize: 16, fontWeight: '400' as const, lineHeight: 24 },
   bodyStrong: { fontSize: 16, fontWeight: '600' as const, lineHeight: 24 },
   // Used for AI-written journal prose — slightly larger, airy line-height.
-  prose: { fontSize: 17, fontWeight: '400' as const, lineHeight: 27 },
+  prose: { fontSize: 17, fontWeight: '400' as const, lineHeight: 28 },
   label: { fontSize: 14, fontWeight: '600' as const },
   caption: { fontSize: 13, fontWeight: '500' as const },
-  micro: { fontSize: 11, fontWeight: '600' as const, letterSpacing: 0.4 },
+  micro: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 1 },
 } as const;
 
 export const shadow = {
   card: {
     shadowColor: '#3A2E1E',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
     elevation: 2,
   },
   floating: {
