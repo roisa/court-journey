@@ -7,7 +7,7 @@ name: Deploy web app to GitHub Pages
 on:
   push:
     branches:
-      - claude/court-journey-design-YOU2i
+      - main
     paths-ignore:
       - 'docs/**'
       - '**/*.md'
