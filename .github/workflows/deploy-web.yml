@@ -48,10 +48,11 @@ jobs:
           touch dist/.nojekyll
 
       - name: Setup Pages
+        # No `enablement: true` — this repo's Actions token can't create the
+        # Pages site (that 403s as "Resource not accessible by integration").
+        # Pages must be enabled once in Settings → Pages → Source: GitHub
+        # Actions; this step then just reads that existing config.
         uses: actions/configure-pages@v5
-        with:
-          # Auto-enable Pages for the repo if it isn't already.
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
