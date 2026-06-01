@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useApp } from '@/store/AppStore';
 import { computeStats } from '@/data/achievements';
 import { formatDate } from '@/lib/date';
-import { Card, Row, Screen, SectionTitle, Txt } from '@/components/ui';
+import { GroupedList, GroupedRow, Row, Screen, SectionTitle, Txt } from '@/components/ui';
 import { colors, radii, spacing } from '@/theme';
 
 export default function Profile() {
@@ -72,40 +72,24 @@ export default function Profile() {
       </Row>
 
       <SectionTitle>Your story</SectionTitle>
-      <Card onPress={() => router.push('/achievements')}>
-        <Row>
-          <Txt variant="body" style={{ marginRight: spacing.sm }}>
-            🏅
-          </Txt>
-          <Txt variant="bodyStrong" style={{ flex: 1 }}>
-            Achievements
-          </Txt>
-          <Txt variant="body" color={colors.inkFaint}>
-            {state.unlocked.length} →
-          </Txt>
-        </Row>
-      </Card>
-
-      <Card onPress={() => router.push('/(tabs)/learn')} style={{ marginTop: spacing.sm }}>
-        <Row>
-          <Txt variant="body" style={{ marginRight: spacing.sm }}>
-            🧠
-          </Txt>
-          <Txt variant="bodyStrong" style={{ flex: 1 }}>
-            Your patterns
-          </Txt>
-          <Txt variant="body" color={colors.inkFaint}>
-            →
-          </Txt>
-        </Row>
-      </Card>
+      <GroupedList>
+        <GroupedRow
+          icon="🏅"
+          label="Achievements"
+          value={String(state.unlocked.length)}
+          onPress={() => router.push('/achievements')}
+        />
+        <GroupedRow
+          icon="🧠"
+          label="Your patterns"
+          onPress={() => router.push('/(tabs)/learn')}
+        />
+      </GroupedList>
 
       <SectionTitle>Settings</SectionTitle>
-      <Pressable onPress={confirmReset} style={styles.dangerRow}>
-        <Txt variant="bodyStrong" color={colors.loss}>
-          Start over
-        </Txt>
-      </Pressable>
+      <GroupedList>
+        <GroupedRow icon="↺" label="Start over" danger onPress={confirmReset} />
+      </GroupedList>
 
       <Txt variant="caption" color={colors.inkFaint} center style={{ marginTop: spacing.xxl }}>
         Court Journey

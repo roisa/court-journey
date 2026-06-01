@@ -10,10 +10,10 @@ import { VoiceRecorder, type VoiceCapture } from '@/components/VoiceRecorder';
 import { PhotoPicker } from '@/components/PhotoPicker';
 import { colors, radii, spacing } from '@/theme';
 
-const OUTCOMES: { value: Outcome; label: string; color: string }[] = [
-  { value: 'won', label: 'Won 🎉', color: colors.win },
-  { value: 'lost', label: 'Lost 😞', color: colors.loss },
-  { value: 'played', label: 'Just played 🎾', color: colors.neutralPlay },
+const OUTCOMES: { value: Outcome; label: string; color: string; tint: string }[] = [
+  { value: 'won', label: 'Won 🎉', color: colors.win, tint: colors.courtTint },
+  { value: 'lost', label: 'Lost 😞', color: colors.loss, tint: '#F7E3E1' },
+  { value: 'played', label: 'Just played 🎾', color: colors.neutralPlay, tint: colors.surfaceAlt },
 ];
 
 export default function Capture() {
@@ -95,7 +95,7 @@ export default function Capture() {
             onPress={() => setResult(o.value)}
             style={({ pressed }) => [
               styles.outcome,
-              result === o.value && { borderColor: o.color, backgroundColor: colors.surface },
+              result === o.value && { borderColor: o.color, backgroundColor: o.tint },
               pressed && { opacity: 0.85 },
             ]}
           >

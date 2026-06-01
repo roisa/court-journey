@@ -65,7 +65,7 @@ export function Screen({
     <SafeAreaView style={[styles.flex, { backgroundColor: background }]} edges={['top']}>
       {scroll ? (
         <ScrollView
-          contentContainerStyle={{ paddingBottom: spacing.xxxl }}
+          contentContainerStyle={{ paddingBottom: 110 }}
           showsVerticalScrollIndicator={false}
         >
           {inner}
@@ -255,6 +255,58 @@ export function Segmented<T extends string>({ options, value, onChange }: Segmen
   );
 }
 
+// ---------------------------------------------------------------------------
+// Grouped list (iOS inset-grouped)
+// ---------------------------------------------------------------------------
+
+export function GroupedList({ children }: { children: React.ReactNode }) {
+  const items = React.Children.toArray(children);
+  return (
+    <View style={styles.group}>
+      {items.map((child, i) => (
+        <View key={i}>
+          {i > 0 && <View style={styles.groupSep} />}
+          {child}
+        </View>
+      ))}
+    </View>
+  );
+}
+
+export function GroupedRow({
+  icon,
+  label,
+  value,
+  onPress,
+  danger,
+}: {
+  icon?: string;
+  label: string;
+  value?: string;
+  onPress?: () => void;
+  danger?: boolean;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.groupRow, pressed && { backgroundColor: colors.surfaceAlt }]}
+    >
+      {icon ? (
+        <Text style={{ fontSize: 20, marginRight: spacing.md }}>{icon}</Text>
+      ) : null}
+      <Text style={[typography.bodyStrong, { flex: 1, color: danger ? colors.loss : colors.ink }]}>
+        {label}
+      </Text>
+      {value ? (
+        <Text style={[typography.body, { color: colors.inkFaint }]}>{value}</Text>
+      ) : null}
+      {onPress && !danger ? (
+        <Text style={[typography.heading, { color: colors.inkFaint, marginLeft: spacing.sm }]}>›</Text>
+      ) : null}
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   card: {
@@ -297,5 +349,22 @@ const styles = StyleSheet.create({
   segmentItemOn: {
     backgroundColor: colors.surface,
     ...shadow.card,
+  },
+  group: {
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    overflow: 'hidden',
+    ...shadow.card,
+  },
+  groupRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    minHeight: 54,
+  },
+  groupSep: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.separator,
+    marginLeft: spacing.xl + spacing.lg,
   },
 });
