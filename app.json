@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Court Journey",
+    "slug": "court-journey",
+    "version": "0.1.0",
+    "scheme": "courtjourney",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0E5C4A",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.courtjourney.mobile"
+    },
+    "android": {
+      "package": "app.courtjourney.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#0E5C4A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Court Journey uses your photos to attach memories to your matches."
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Court Journey uses your microphone so you can capture voice notes after a match."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
