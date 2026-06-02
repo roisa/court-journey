@@ -50,7 +50,7 @@ The app is local-first and works with zero setup. To add free online backup + cr
    - GitHub Pages deploy: repo **Settings → Secrets and variables → Actions → Variables** → add `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY`, then re-run the deploy.
 4. In the app: **Profile → Back up & sync** → enter your email → tap the link.
 
-The anon key is safe to expose publicly; Row-Level Security ensures each user only accesses their own journey. Structured data (matches, memories, lessons, achievements…) syncs as one JSON row per user; photo/voice media stays on-device for now.
+The anon key is safe to expose publicly; Row-Level Security ensures each user only accesses their own journey. Structured data syncs as one JSON row per user; photos & voice notes upload to a private Storage bucket (per-user folders, signed-URL reads). All within the free tier (~1 GB storage). The `schema.sql` above sets up both the table and the media bucket.
 
 **Architecture:** local-first (AsyncStorage), offline-capable, zero secrets required. The AI story generator ships with an on-device heuristic and a Claude-ready implementation that activates via `EXPO_PUBLIC_ANTHROPIC_API_KEY` (in production the key belongs in a Supabase Edge Function — see Phase 13).
 

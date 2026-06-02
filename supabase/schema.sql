@@ -23,3 +23,24 @@ create policy "journeys_update_own"
   on public.journeys for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- ---------------------------------------------------------------------------
+-- Media storage: photos & voice notes. Private bucket, one folder per user
+-- (objects are stored at "<user_id>/<file_id>"). RLS restricts each user to
+-- their own folder.
+-- ---------------------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('media', 'media', false)
+on conflict (id) do nothing;
+
+create policy "media_select_own"
+  on storage.objects for select
+  using (bucket_id = 'media' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "media_insert_own"
+  on storage.objects for insert
+  with check (bucket_id = 'media' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "media_update_own"
+  on storage.objects for update
+  using (bucket_id = 'media' and (storage.foldername(name))[1] = auth.uid()::text);

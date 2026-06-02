@@ -37,6 +37,7 @@ import {
 } from '@/services/storage';
 import { supabase, isSupabaseConfigured, authRedirectUrl } from '@/services/supabase';
 import { pullRemote, pushRemote } from '@/services/sync';
+import { uploadMedia, guessContentType } from '@/services/media';
 import { getStoryGenerator } from '@/services/ai';
 import { chipByLabel } from '@/data/tags';
 import { buildPreset } from '@/data/checklists';
@@ -103,6 +104,7 @@ type Action =
   | { type: 'TOGGLE_ITEM'; checklistId: string; itemId: string }
   | { type: 'ADD_ITEM'; checklistId: string; item: ChecklistItem }
   | { type: 'UNLOCK'; codes: string[] }
+  | { type: 'SET_MEDIA_REMOTE'; kind: 'photo' | 'voice'; id: string; remotePath: string }
   | { type: 'RESET' };
 
 // ---------------------------------------------------------------------------
@@ -183,6 +185,20 @@ function reducer(state: AppState, action: Action): AppState {
       if (fresh.length === 0) return state;
       return { ...state, unlocked: [...state.unlocked, ...fresh] };
     }
+    case 'SET_MEDIA_REMOTE':
+      return action.kind === 'photo'
+        ? {
+            ...state,
+            photos: state.photos.map((p) =>
+              p.id === action.id ? { ...p, remotePath: action.remotePath } : p,
+            ),
+          }
+        : {
+            ...state,
+            voiceNotes: state.voiceNotes.map((v) =>
+              v.id === action.id ? { ...v, remotePath: action.remotePath } : v,
+            ),
+          };
     case 'RESET':
       return emptyState;
     default:
@@ -331,6 +347,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (toCelebrate.length) setRecentlyUnlocked((prev) => [...prev, ...toCelebrate]);
     }
   }, [state, hydrated]);
+
+  // Backfill: upload any photos/voice notes that aren't in the cloud yet.
+  // Best-effort and idempotent; on-device files stay the source of truth.
+  const mediaInFlight = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!hydrated || !session?.user) return;
+    const userId = session.user.id;
+    const pending: { kind: 'photo' | 'voice'; id: string; uri: string; type: string }[] = [];
+    for (const p of state.photos) {
+      if (p.uri && !p.remotePath && !mediaInFlight.current.has(p.id)) {
+        pending.push({ kind: 'photo', id: p.id, uri: p.uri, type: guessContentType(p.uri, 'image/jpeg') });
+      }
+    }
+    for (const v of state.voiceNotes) {
+      if (v.uri && !v.remotePath && !mediaInFlight.current.has(v.id)) {
+        pending.push({ kind: 'voice', id: v.id, uri: v.uri, type: guessContentType(v.uri, 'audio/mp4') });
+      }
+    }
+    pending.forEach(async (item) => {
+      mediaInFlight.current.add(item.id);
+      const path = await uploadMedia(userId, item.uri, item.id, item.type);
+      if (path) dispatch({ type: 'SET_MEDIA_REMOTE', kind: item.kind, id: item.id, remotePath: path });
+    });
+  }, [hydrated, session, state.photos, state.voiceNotes]);
 
   const experienceTier: ExperienceTier = useMemo(() => {
     const n = state.tournaments.length;
