@@ -1,11 +1,12 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import type { Memory } from '@/types/models';
 import { useApp } from '@/store/AppStore';
 import { feelingOption } from '@/data/feelings';
 import { relativeDay } from '@/lib/date';
 import { colors, radii, spacing } from '@/theme';
 import { Card, Row, Txt } from './ui';
+import { SmartImage } from './SmartImage';
 
 const RESULT_LABEL: Record<string, { text: string; color: string }> = {
   won: { text: 'WON', color: colors.win },
@@ -24,7 +25,7 @@ export function MemoryCard({ memory, onPress }: { memory: Memory; onPress: () =>
 
   return (
     <Card onPress={onPress} style={styles.card}>
-      {photo && <Image source={{ uri: photo.uri }} style={styles.photo} resizeMode="cover" />}
+      {photo && <SmartImage uri={photo.uri} remotePath={photo.remotePath} style={styles.photo} />}
       <View style={styles.body}>
         <Row gap={spacing.sm} style={{ marginBottom: spacing.xs }}>
           {result && (

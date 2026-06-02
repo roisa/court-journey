@@ -87,6 +87,7 @@ export interface Photo {
   memoryId: string;
   uri: string;
   takenAt?: string;
+  remotePath?: string; // Supabase Storage path, once uploaded
 }
 
 export interface VoiceNote {
@@ -96,6 +97,7 @@ export interface VoiceNote {
   durationSec?: number;
   transcript?: string;
   recordedAt: string;
+  remotePath?: string; // Supabase Storage path, once uploaded
 }
 
 export interface Lesson {

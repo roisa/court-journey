@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -16,6 +15,8 @@ import { themeLabel } from '@/data/tags';
 import { formatDate } from '@/lib/date';
 import { Button, Card, Row, Screen, SectionTitle, Txt } from '@/components/ui';
 import { Appear } from '@/components/motion';
+import { SmartImage } from '@/components/SmartImage';
+import { useSignedUri } from '@/hooks/useSignedUri';
 import { colors, radii, spacing } from '@/theme';
 
 export default function MemoryDetail() {
@@ -34,7 +35,8 @@ export default function MemoryDetail() {
   const lessons = memory ? state.lessons.filter((l) => memory.lessonIds.includes(l.id)) : [];
   const feeling = feelingOption(memory?.feeling);
 
-  const player = useAudioPlayer(voice?.uri ?? undefined);
+  const voiceRemote = useSignedUri(voice?.remotePath);
+  const player = useAudioPlayer(voiceRemote ?? voice?.uri ?? undefined);
 
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(memory?.aiTitle ?? '');
@@ -62,11 +64,11 @@ export default function MemoryDetail() {
       {photos.length > 0 && (
         <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
           {photos.map((p) => (
-            <Image
+            <SmartImage
               key={p.id}
-              source={{ uri: p.uri }}
+              uri={p.uri}
+              remotePath={p.remotePath}
               style={[styles.hero, { width }]}
-              resizeMode="cover"
             />
           ))}
         </ScrollView>
