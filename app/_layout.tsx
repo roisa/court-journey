@@ -50,6 +50,7 @@ function RootNavigator() {
           name="tournament/new"
           options={{ presentation: 'modal', title: 'New tournament' }}
         />
+        <Stack.Screen name="sync" options={{ presentation: 'modal', title: 'Cloud sync' }} />
         <Stack.Screen name="memory/[id]" options={{ title: 'Memory' }} />
         <Stack.Screen name="tournament/[id]" options={{ title: 'Tournament' }} />
         <Stack.Screen name="achievements" options={{ title: 'Achievements' }} />
