@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Animated, useLivingPulse } from '@/components/motion';
 import { colors, shadow } from '@/theme';
 
 /** Frosted, translucent tab bar background — the iOS "Liquid Glass" surface. */
@@ -28,24 +29,26 @@ function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
 function CaptureFab() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const pulse = useLivingPulse();
   return (
     <View
       pointerEvents="box-none"
       style={[StyleSheet.absoluteFill, { justifyContent: 'flex-end', alignItems: 'center' }]}
     >
-      <Pressable
-        accessibilityLabel="Capture a match"
-        accessibilityRole="button"
-        onPress={() => router.push('/capture')}
-        style={({ pressed }) => [
-          styles.captureBtn,
-          shadow.floating,
-          { marginBottom: insets.bottom + 14 },
-          pressed && { opacity: 0.9, transform: [{ scale: 0.96 }] },
-        ]}
-      >
-        <Text style={styles.captureIcon}>⚡</Text>
-      </Pressable>
+      <Animated.View style={[{ marginBottom: insets.bottom + 14 }, pulse]}>
+        <Pressable
+          accessibilityLabel="Capture a match"
+          accessibilityRole="button"
+          onPress={() => router.push('/capture')}
+          style={({ pressed }) => [
+            styles.captureBtn,
+            shadow.floating,
+            pressed && { opacity: 0.9, transform: [{ scale: 0.94 }] },
+          ]}
+        >
+          <Text style={styles.captureIcon}>⚡</Text>
+        </Pressable>
+      </Animated.View>
     </View>
   );
 }
