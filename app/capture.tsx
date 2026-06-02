@@ -8,6 +8,7 @@ import { REFLECTION_CHIPS } from '@/data/tags';
 import { Button, Card, Pill, Row, Screen, SectionTitle, Txt } from '@/components/ui';
 import { VoiceRecorder, type VoiceCapture } from '@/components/VoiceRecorder';
 import { PhotoPicker } from '@/components/PhotoPicker';
+import { Appear } from '@/components/motion';
 import { colors, radii, spacing } from '@/theme';
 
 const KINDS: { value: MatchContext; label: string }[] = [
@@ -122,7 +123,7 @@ export default function Capture() {
 
       {/* Optional: attach to an existing tournament */}
       {(context === 'tournament' || context === 'mini') && state.tournaments.length > 0 && (
-        <>
+        <Appear>
           <SectionTitle>Which one?</SectionTitle>
           <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
             {state.tournaments.map((t) => (
@@ -135,11 +136,11 @@ export default function Capture() {
             ))}
             <Pill label="Not listed" selected={!tournamentId} onPress={() => setTournamentId(undefined)} />
           </Row>
-        </>
+        </Appear>
       )}
 
       {context && (
-        <>
+        <Appear>
           {/* 2 — Outcome */}
           <SectionTitle>How’d it go?</SectionTitle>
           <View style={{ gap: spacing.sm }}>
@@ -160,11 +161,11 @@ export default function Capture() {
               </Pressable>
             ))}
           </View>
-        </>
+        </Appear>
       )}
 
       {context && result && (
-        <>
+        <Appear>
           {/* 3 — Feeling */}
           <SectionTitle>How do you feel?</SectionTitle>
           <Row gap={spacing.sm} style={{ flexWrap: 'wrap' }}>
@@ -231,7 +232,7 @@ export default function Capture() {
           <View style={{ height: spacing.xl }} />
           <Button label="Save this memory" onPress={save} />
           <View style={{ height: spacing.xl }} />
-        </>
+        </Appear>
       )}
     </Screen>
   );

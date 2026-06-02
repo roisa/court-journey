@@ -4,6 +4,7 @@ import { useApp } from '@/store/AppStore';
 import { deriveInsights } from '@/services/insights';
 import { themeLabel } from '@/data/tags';
 import { Card, Row, Screen, SectionTitle, Txt } from '@/components/ui';
+import { Appear } from '@/components/motion';
 import { colors, radii, spacing } from '@/theme';
 import type { Insight } from '@/types/models';
 
@@ -45,20 +46,22 @@ export default function Learn() {
         </Card>
       ) : (
         <View style={{ gap: spacing.md, marginTop: spacing.lg }}>
-          {insights.map((ins) => {
+          {insights.map((ins, i) => {
             const meta = TYPE_META[ins.type];
             return (
-              <Card key={ins.id} style={{ borderLeftWidth: 4, borderLeftColor: meta.color }}>
-                <Row gap={spacing.sm}>
-                  <Txt variant="body">{meta.emoji}</Txt>
-                  <Txt variant="micro" color={meta.color}>
-                    {meta.label.toUpperCase()}
+              <Appear key={ins.id} delay={Math.min(i, 8) * 60}>
+                <Card style={{ borderLeftWidth: 4, borderLeftColor: meta.color }}>
+                  <Row gap={spacing.sm}>
+                    <Txt variant="body">{meta.emoji}</Txt>
+                    <Txt variant="micro" color={meta.color}>
+                      {meta.label.toUpperCase()}
+                    </Txt>
+                  </Row>
+                  <Txt variant="prose" style={{ marginTop: spacing.sm }}>
+                    {ins.narrative}
                   </Txt>
-                </Row>
-                <Txt variant="prose" style={{ marginTop: spacing.sm }}>
-                  {ins.narrative}
-                </Txt>
-              </Card>
+                </Card>
+              </Appear>
             );
           })}
         </View>

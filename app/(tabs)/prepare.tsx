@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useApp } from '@/store/AppStore';
 import { deriveInsights } from '@/services/insights';
 import { Button, Card, Pill, Row, Screen, SectionTitle, Txt } from '@/components/ui';
+import { Bob } from '@/components/motion';
 import { colors, radii, spacing } from '@/theme';
 
 export default function Prepare() {
@@ -35,7 +36,9 @@ export default function Prepare() {
       <Screen>
         <Header />
         <Card style={{ alignItems: 'center', paddingVertical: spacing.xxl, marginTop: spacing.lg }}>
-          <Txt variant="display">🧘</Txt>
+          <Bob>
+            <Txt variant="display">🧘</Txt>
+          </Bob>
           <Txt variant="heading" center style={{ marginTop: spacing.md }}>
             Nothing on the horizon
           </Txt>

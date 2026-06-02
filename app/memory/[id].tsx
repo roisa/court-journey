@@ -15,6 +15,7 @@ import { feelingOption } from '@/data/feelings';
 import { themeLabel } from '@/data/tags';
 import { formatDate } from '@/lib/date';
 import { Button, Card, Row, Screen, SectionTitle, Txt } from '@/components/ui';
+import { Appear } from '@/components/motion';
 import { colors, radii, spacing } from '@/theme';
 
 export default function MemoryDetail() {
@@ -98,9 +99,11 @@ export default function MemoryDetail() {
         {editing ? (
           <TextInput value={title} onChangeText={setTitle} style={styles.titleInput} multiline />
         ) : (
-          <Txt variant="title" style={{ marginTop: spacing.sm }}>
-            {memory.aiTitle}
-          </Txt>
+          <Appear>
+            <Txt variant="title" style={{ marginTop: spacing.sm }}>
+              {memory.aiTitle}
+            </Txt>
+          </Appear>
         )}
 
         {/* Match facts */}
@@ -135,9 +138,11 @@ export default function MemoryDetail() {
             textAlignVertical="top"
           />
         ) : (
-          <Txt variant="prose" color={colors.ink}>
-            {memory.aiStory}
-          </Txt>
+          <Appear delay={90}>
+            <Txt variant="prose" color={colors.ink}>
+              {memory.aiStory}
+            </Txt>
+          </Appear>
         )}
 
         {editing ? (

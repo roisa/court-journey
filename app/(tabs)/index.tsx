@@ -6,6 +6,7 @@ import { pickResurfaced } from '@/services/resurfacing';
 import { MemoryCard } from '@/components/MemoryCard';
 import { ResurfaceCard } from '@/components/ResurfaceCard';
 import { Button, Card, Screen, Segmented, Txt } from '@/components/ui';
+import { Appear, Bob } from '@/components/motion';
 import { colors, spacing } from '@/theme';
 
 type Filter = 'all' | 'tournaments';
@@ -29,15 +30,19 @@ export default function Journey() {
   return (
     <Screen>
       <View style={{ height: spacing.lg }} />
-      <Txt variant="display" style={{ marginBottom: spacing.lg }}>
-        Hi {firstName} 👋
-      </Txt>
+      <Appear>
+        <Txt variant="display" style={{ marginBottom: spacing.lg }}>
+          Hi {firstName} 👋
+        </Txt>
+      </Appear>
 
       {resurfaced && (
-        <ResurfaceCard
-          item={resurfaced}
-          onPress={() => router.push(`/memory/${resurfaced.memory.id}`)}
-        />
+        <Appear delay={60}>
+          <ResurfaceCard
+            item={resurfaced}
+            onPress={() => router.push(`/memory/${resurfaced.memory.id}`)}
+          />
+        </Appear>
       )}
 
       {state.memories.length === 0 ? (
@@ -56,8 +61,10 @@ export default function Journey() {
           </View>
 
           <View style={{ gap: spacing.md }}>
-            {memories.map((m) => (
-              <MemoryCard key={m.id} memory={m} onPress={() => router.push(`/memory/${m.id}`)} />
+            {memories.map((m, i) => (
+              <Appear key={m.id} delay={Math.min(i, 8) * 55}>
+                <MemoryCard memory={m} onPress={() => router.push(`/memory/${m.id}`)} />
+              </Appear>
             ))}
           </View>
 
@@ -75,7 +82,9 @@ export default function Journey() {
 function EmptyState({ onCapture }: { onCapture: () => void }) {
   return (
     <Card style={{ alignItems: 'center', paddingVertical: spacing.xxl }}>
-      <Txt variant="display">🎾</Txt>
+      <Bob>
+        <Txt variant="display">🎾</Txt>
+      </Bob>
       <Txt variant="heading" center style={{ marginTop: spacing.md }}>
         Start your story
       </Txt>
