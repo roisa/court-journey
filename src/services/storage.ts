@@ -45,6 +45,27 @@ export async function saveState(state: AppState): Promise<void> {
 export async function clearState(): Promise<void> {
   try {
     await AsyncStorage.removeItem(KEY);
+    await AsyncStorage.removeItem(TS_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Local "last changed" timestamp, used for last-write-wins cloud sync. */
+const TS_KEY = 'court-journey/updatedAt/v1';
+
+export async function loadUpdatedAt(): Promise<number> {
+  try {
+    const raw = await AsyncStorage.getItem(TS_KEY);
+    return raw ? Number(raw) || 0 : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export async function saveUpdatedAt(ts: number): Promise<void> {
+  try {
+    await AsyncStorage.setItem(TS_KEY, String(ts));
   } catch {
     /* ignore */
   }

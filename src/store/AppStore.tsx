@@ -26,7 +26,17 @@ import type {
   User,
   VoiceNote,
 } from '@/types/models';
-import { emptyState, loadState, saveState, clearState } from '@/services/storage';
+import type { Session } from '@supabase/supabase-js';
+import {
+  emptyState,
+  loadState,
+  saveState,
+  clearState,
+  loadUpdatedAt,
+  saveUpdatedAt,
+} from '@/services/storage';
+import { supabase, isSupabaseConfigured, authRedirectUrl } from '@/services/supabase';
+import { pullRemote, pushRemote } from '@/services/sync';
 import { getStoryGenerator } from '@/services/ai';
 import { chipByLabel } from '@/data/tags';
 import { buildPreset } from '@/data/checklists';
@@ -200,6 +210,20 @@ interface AppContextValue {
   toggleChecklistItem: (checklistId: string, itemId: string) => void;
   addChecklistItem: (checklistId: string, text: string) => void;
   reset: () => Promise<void>;
+  auth: AuthApi;
+}
+
+export type SyncStatus = 'off' | 'syncing' | 'synced' | 'error';
+export type MagicLinkStatus = 'idle' | 'sending' | 'sent' | 'error';
+
+export interface AuthApi {
+  /** Whether Supabase keys are present in this build. */
+  configured: boolean;
+  email: string | null;
+  syncStatus: SyncStatus;
+  magicStatus: MagicLinkStatus;
+  signInWithEmail: (email: string) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -210,6 +234,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [recentlyUnlocked, setRecentlyUnlocked] = useState<string[]>([]);
   const knownCodes = useRef<Set<string>>(new Set());
 
+  // --- Cloud sync state ---
+  const [session, setSession] = useState<Session | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(isSupabaseConfigured ? 'synced' : 'off');
+  const [magicStatus, setMagicStatus] = useState<MagicLinkStatus>('idle');
+  const localUpdatedAt = useRef<number>(0);
+  const reconciledFor = useRef<string | null>(null);
+  const pushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Always-fresh state for async callbacks (capture → chapter regeneration).
   const stateRef = useRef(state);
   useEffect(() => {
@@ -219,8 +251,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Hydrate from disk once.
   useEffect(() => {
     let active = true;
-    loadState().then((loaded) => {
+    Promise.all([loadState(), loadUpdatedAt()]).then(([loaded, ts]) => {
       if (!active) return;
+      localUpdatedAt.current = ts;
       knownCodes.current = new Set(loaded.unlocked.map((u) => u.achievementCode));
       dispatch({ type: 'HYDRATE', state: loaded });
       setHydrated(true);
@@ -230,10 +263,58 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Persist on every change (after hydration).
+  // Persist locally on every change, stamp a local "updatedAt", and (if signed
+  // in) debounce a push to the cloud.
   useEffect(() => {
-    if (hydrated) void saveState(state);
-  }, [state, hydrated]);
+    if (!hydrated) return;
+    void saveState(state);
+    const ts = Date.now();
+    localUpdatedAt.current = ts;
+    void saveUpdatedAt(ts);
+    if (session?.user) {
+      const userId = session.user.id;
+      if (pushTimer.current) clearTimeout(pushTimer.current);
+      setSyncStatus('syncing');
+      pushTimer.current = setTimeout(() => {
+        pushRemote(userId, stateRef.current, ts).then((ok) =>
+          setSyncStatus(ok ? 'synced' : 'error'),
+        );
+      }, 1200);
+    }
+  }, [state, hydrated, session]);
+
+  // Subscribe to Supabase auth (no-op when unconfigured).
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  // On sign-in, reconcile local vs cloud once (last-write-wins by timestamp).
+  useEffect(() => {
+    if (!hydrated || !session?.user) return;
+    const userId = session.user.id;
+    if (reconciledFor.current === userId) return;
+    reconciledFor.current = userId;
+    setSyncStatus('syncing');
+    (async () => {
+      const remote = await pullRemote(userId);
+      const localTs = localUpdatedAt.current;
+      const localHasData = stateRef.current.matches.length > 0 || !!stateRef.current.user;
+      if (remote && (remote.updatedAt >= localTs || !localHasData)) {
+        // Cloud is newer (or we're a fresh device) → adopt it.
+        dispatch({ type: 'HYDRATE', state: remote.state });
+        localUpdatedAt.current = remote.updatedAt;
+        void saveUpdatedAt(remote.updatedAt);
+        setSyncStatus('synced');
+      } else {
+        // Local is newer (or no cloud copy yet) → push it up.
+        const ok = await pushRemote(userId, stateRef.current, localTs || Date.now());
+        setSyncStatus(ok ? 'synced' : 'error');
+      }
+    })();
+  }, [hydrated, session]);
 
   // Evaluate achievements whenever the underlying data changes.
   useEffect(() => {
@@ -443,11 +524,40 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const reset = useCallback(async () => {
     await clearState();
     knownCodes.current = new Set();
+    localUpdatedAt.current = 0;
     setRecentlyUnlocked([]);
     dispatch({ type: 'RESET' });
   }, []);
 
   const clearRecentlyUnlocked = useCallback(() => setRecentlyUnlocked([]), []);
+
+  const signInWithEmail = useCallback(async (email: string) => {
+    if (!supabase) return;
+    setMagicStatus('sending');
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: authRedirectUrl() },
+    });
+    setMagicStatus(error ? 'error' : 'sent');
+  }, []);
+
+  const signOut = useCallback(async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    reconciledFor.current = null;
+    setSession(null);
+    setSyncStatus(isSupabaseConfigured ? 'synced' : 'off');
+    setMagicStatus('idle');
+  }, []);
+
+  const auth: AuthApi = {
+    configured: isSupabaseConfigured,
+    email: session?.user?.email ?? null,
+    syncStatus,
+    magicStatus,
+    signInWithEmail,
+    signOut,
+  };
 
   const value: AppContextValue = {
     state,
@@ -464,6 +574,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toggleChecklistItem,
     addChecklistItem,
     reset,
+    auth,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

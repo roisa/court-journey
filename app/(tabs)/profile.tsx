@@ -8,7 +8,7 @@ import { GroupedList, GroupedRow, Row, Screen, SectionTitle, Txt } from '@/compo
 import { colors, radii, spacing } from '@/theme';
 
 export default function Profile() {
-  const { state, reset } = useApp();
+  const { state, reset, auth } = useApp();
   const router = useRouter();
   const stats = useMemo(() => computeStats(state), [state]);
 
@@ -83,6 +83,24 @@ export default function Profile() {
           icon="🧠"
           label="Your patterns"
           onPress={() => router.push('/(tabs)/learn')}
+        />
+      </GroupedList>
+
+      <SectionTitle>Backup</SectionTitle>
+      <GroupedList>
+        <GroupedRow
+          icon="☁️"
+          label={auth.email ? 'Cloud sync' : 'Back up & sync'}
+          value={
+            auth.email
+              ? auth.syncStatus === 'syncing'
+                ? 'Syncing…'
+                : 'On'
+              : auth.configured
+                ? 'Set up'
+                : 'Off'
+          }
+          onPress={() => router.push('/sync')}
         />
       </GroupedList>
 

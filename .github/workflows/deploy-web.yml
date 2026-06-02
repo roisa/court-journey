@@ -38,6 +38,12 @@ jobs:
 
       - name: Export web build
         run: npx expo export --platform web
+        env:
+          # Optional cloud sync. Set these as repository Variables (Settings →
+          # Secrets and variables → Actions → Variables). Both are public-safe;
+          # if unset, the app builds in local-only mode.
+          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Add SPA fallback + disable Jekyll
         run: |

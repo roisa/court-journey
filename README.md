@@ -38,6 +38,20 @@ npm run typecheck  # tsc --noEmit
 ```
 
 **Stack:** Expo SDK 56 · React Native · TypeScript · Expo Router · Reanimated.
+
+### Cloud sync (optional, free)
+
+The app is local-first and works with zero setup. To add free online backup + cross-device sync (Supabase free tier, email magic-link sign-in):
+
+1. Create a free project at supabase.com.
+2. In the SQL editor, run [`supabase/schema.sql`](supabase/schema.sql).
+3. Add your two public keys so the build picks them up:
+   - Local dev: put them in a `.env` file — `EXPO_PUBLIC_SUPABASE_URL=…` and `EXPO_PUBLIC_SUPABASE_ANON_KEY=…`.
+   - GitHub Pages deploy: repo **Settings → Secrets and variables → Actions → Variables** → add `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY`, then re-run the deploy.
+4. In the app: **Profile → Back up & sync** → enter your email → tap the link.
+
+The anon key is safe to expose publicly; Row-Level Security ensures each user only accesses their own journey. Structured data (matches, memories, lessons, achievements…) syncs as one JSON row per user; photo/voice media stays on-device for now.
+
 **Architecture:** local-first (AsyncStorage), offline-capable, zero secrets required. The AI story generator ships with an on-device heuristic and a Claude-ready implementation that activates via `EXPO_PUBLIC_ANTHROPIC_API_KEY` (in production the key belongs in a Supabase Edge Function — see Phase 13).
 
 | Layer | Where |
